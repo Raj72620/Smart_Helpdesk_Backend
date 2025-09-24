@@ -2,24 +2,19 @@
   "version": 2,
   "builds": [
     {
-      "src": "smarthelpdesk/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
+      "src": "*/wsgi.py",
+      "use": "@vercel/python"
     },
     {
       "src": "build_files.sh",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "staticfiles_build" }
+      "use": "@vercel/static-build"
     }
   ],
   "routes": [
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
       "src": "/(.*)",
-      "dest": "smarthelpdesk/wsgi.py"
+      "dest": "helpdesk/wsgi.py"
     }
-  ]
+  ],
+  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput"
 }
