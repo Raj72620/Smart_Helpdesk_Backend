@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Helpdesk Frontend</title>
+</head>
+<body>
+    <h1>Smart Helpdesk</h1>
+    <div id="login-section">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username" value="attar">
+        <input type="password" id="password" placeholder="Password" value="cheritha001">
+        <button onclick="login()">Login</button>
+        <div id="login-message"></div>
+    </div>
+
+    <div id="ticket-section" style="display:none;">
+        <h2>Tickets</h2>
+        <button onclick="listTickets()">Refresh Tickets</button>
+        <ul id="tickets-list"></ul>
+        <h3>Create Ticket</h3>
+        <input type="text" id="title" placeholder="Title">
+        <input type="text" id="description" placeholder="Description">
+        <input type="text" id="urgency" placeholder="Urgency">
+        <input type="text" id="source" placeholder="Source">
+        <button onclick="createTicket()">Create</button>
+        <div id="create-message"></div>
+    </div>
+
+    <script>
+        let token = "";
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            fetch('/api/token/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.access) {
+                    token = data.access;
+                    document.getElementById('login-message').innerText = "Login successful!";
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('ticket-section').style.display = 'block';
+                    listTickets();
+                } else {
+                    document.getElementById('login-message').innerText = "Login failed!";
+                }
+            });
+        }
+
+        function listTickets() {
+            fetch('/api/tickets/', {
+                headers: {'Authorization': 'Bearer ' + token}
+            })
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById('tickets-list');
+                list.innerHTML = '';
+                data.forEach(ticket => {
+                    const li = document.createElement('li');
+                    li.innerText = `${ticket.title} - ${ticket.status || ''}`;
+                    list.appendChild(li);
+                });
+            });
+        }
+
+        function createTicket() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const urgency = document.getElementById('urgency').value;
+            const source = document.getElementById('source').value;
+            fetch('/api/tickets/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({title, description, urgency, source})
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('create-message').innerText = "Ticket created!";
+                listTickets();
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# serializers.py
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ['title', 'description', 'created_by']
+        read_only_fields = ['created_by']
+
+# views.py
+def perform_create(self, serializer):
+    serializer.save(created_by=self.request.user)

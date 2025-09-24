@@ -1,0 +1,14 @@
+from helpdesk.views import home
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('helpdesk.urls')),
+    path('', home),  # This serves your frontend at the root URL
+]
+from rest_framework.routers import DefaultRouter
+from .views import TicketViewSet
+
+router = DefaultRouter()
+router.register(r'tickets', TicketViewSet)
+
+urlpatterns = router.urls
