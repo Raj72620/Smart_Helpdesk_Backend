@@ -15,7 +15,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-l)*qp@==os#i3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = [os.environ.get('VERCEL_URL', '.vercel.app')]
+import os
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, 'smart-helpdesk-backend.onrender.com']
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'smart-helpdesk-backend.onrender.com', '.onrender.com']
 
 
 # Application definition
